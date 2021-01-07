@@ -1,0 +1,14 @@
+@import 'config.scss';
+
+.main__layout {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .left__panel {
+        flex: 0.2;
+    }
+    .right__panel {
+        flex: 0.8;
+    }
+}
