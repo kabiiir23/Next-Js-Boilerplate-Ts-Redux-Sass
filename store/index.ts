@@ -3,28 +3,23 @@ import storage from 'redux-persist/lib/storage';
 import thunk, { ThunkDispatch, ThunkMiddleware } from 'redux-thunk';
 import { encryptTransform } from 'redux-persist-transform-encrypt';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import {
-  createStore,
-  applyMiddleware,
-  compose,
-  Action,
-  AnyAction,
-} from 'redux';
+import { createStore, applyMiddleware, compose, Action } from 'redux';
 import { rootReducer } from './rootReducer';
+import createSagaMiddleware from 'redux-saga';
+import rootSaga from './rootSaga';
 
 const encryptor = encryptTransform({
-  secretKey: process.env.redux_SECRET,
-  onError(error) {
-    console.log(error);
-  },
+	secretKey: process.env.redux_SECRET,
+	onError(error) {
+		console.log(error);
+	},
 });
 
 const persistConfig = {
-  key: 'root',
-  storage,
-  transforms: [encryptor],
-  whitelist: [], // persisting reducers ['reducerName']
+	key: 'root',
+	storage,
+	transforms: [encryptor],
+	whitelist: ['example'], // persisting reducers ['reducerName']
 };
 
 // create persistReducer
@@ -32,30 +27,34 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export type AppState = ReturnType<typeof rootReducer>;
 
+const sagaMiddleware = createSagaMiddleware();
+
 // create redux store
 let store = createStore(
-  persistedReducer,
-  composeWithDevTools(applyMiddleware(thunk)),
+	persistedReducer,
+	composeWithDevTools(applyMiddleware(thunk))
 );
 
 if (process.env.NODE_ENV === 'development') {
-  store = createStore(
-    persistedReducer,
-    composeWithDevTools(
-      applyMiddleware(thunk as ThunkMiddleware<AppState, Action<any>>),
-    ),
-  );
+	store = createStore(
+		persistedReducer,
+		composeWithDevTools(
+			applyMiddleware(
+				thunk as ThunkMiddleware<AppState, Action<any>>,
+				sagaMiddleware
+			)
+		)
+	);
 } else if (process.env.NODE_ENV === 'production') {
-  store = createStore(persistedReducer, compose(applyMiddleware(thunk)));
+	store = createStore(persistedReducer, compose(applyMiddleware(thunk)));
 }
+
+sagaMiddleware.run(rootSaga);
 
 const persistor = persistStore(store);
 
 export type AppDispatch = typeof store.dispatch;
 
-export const useAppDispatch: AppDispatch = useDispatch;
-export type thunkDispatch = ThunkDispatch<AppState, any, AnyAction>;
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
-
 export type RootState = ReturnType<typeof store.getState>;
+
 export { store, persistor };
