@@ -10,27 +10,31 @@ const useAsyncThunkDispatch = (func) => {
 	const [error, setError] = useState(null);
 	const dispatch: thunkDispatch = useDispatch();
 
-	const asyncDispatch = () => {
-		setData(null);
-		setError(null);
-		setIsLoading(true);
-		setIsError(false);
-		dispatch(func())
-			.then((res) => {
-				if (res) {
-					setData(res);
+	const asyncDispatch = () =>
+		new Promise((resolve, reject) => {
+			setData(null);
+			setError(null);
+			setIsLoading(true);
+			setIsError(false);
+			dispatch(func())
+				.then((res) => {
+					if (res.data) {
+						setData(res.data);
+						setIsLoading(false);
+					} else {
+						throw res;
+					}
+				})
+				.catch((e) => {
+					console.log(e);
+					setIsError(true);
+					setError(e);
 					setIsLoading(false);
-				}
-			})
-			.catch((e) => {
-				setIsError(true);
-				setError(e);
-				setIsLoading(false);
-				console.log(e);
-			});
-	};
+				});
+			resolve('done');
+		});
 
-	return { asyncDispatch, data, isLoading, isError };
+	return { asyncDispatch, data, isLoading, isError, error };
 };
 
 export default useAsyncThunkDispatch;
