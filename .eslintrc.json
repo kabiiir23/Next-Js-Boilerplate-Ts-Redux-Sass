@@ -3,6 +3,17 @@
 		"browser": true,
 		"node": true
 	},
+	"extends": [
+		"plugin:react/recommended",
+		"airbnb-typescript-prettier",
+		"eslint:recommended"
+		// "plugin:eslint-comments/recommended",
+		// "plugin:@typescript-eslint/recommended",
+		// "plugin:import/typescript",
+		// "plugin:functional/lite",
+		// "prettier",
+		// "prettier/@typescript-eslint"
+	],
 	"parser": "@typescript-eslint/parser",
 	"ignorePatterns": ["node_modules", "lotties", ".next", "*.js"],
 	"parserOptions": {
@@ -19,22 +30,12 @@
 		"eslint-comments",
 		"functional"
 	],
-	"extends": [
-		"plugin:react/recommended",
-		"airbnb-typescript-prettier",
-		"eslint:recommended",
-		"plugin:eslint-comments/recommended",
-		"plugin:@typescript-eslint/recommended",
-		"plugin:import/typescript",
-		"plugin:functional/lite",
-		"prettier",
-		"prettier/@typescript-eslint"
-	],
 	"rules": {
 		"react/jsx-one-expression-per-line": "off",
 		"react/jsx-props-no-spreading": "off",
 		"react/no-array-index-key": "off",
 		"react-hooks/exhaustive-deps": "off",
+		"react/react-in-jsx-scope": "off",
 		"react/jsx-filename-extension": [
 			1,
 			{ "extensions": [".js", ".jsx", ".tsx"] }
@@ -56,6 +57,7 @@
 		"object-curly-newline": "off",
 		"jsx-quotes": ["warn", "prefer-single"],
 		"consistent-return": "off",
+		"no-underscore-dangle": "off",
 
 		"@typescript-eslint/explicit-module-boundary-types": "off",
 		"@typescript-eslint/no-unused-vars": "off",
@@ -74,6 +76,7 @@
 			{ "newlines-between": "always", "alphabetize": { "order": "asc" } }
 		],
 		"import/prefer-default-export": "off",
+		"import/no-mutable-exports": "off",
 		"prettier/prettier": "off",
 		"sort-imports": [
 			"error",
